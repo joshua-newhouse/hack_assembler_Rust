@@ -1,5 +1,6 @@
 use crate::encoder::codes::Codes;
 use crate::parser::instruction::Instruction;
+use crate::SymbolTable;
 
 pub struct Encoder<'a> {
     codes: &'a Codes,
@@ -10,14 +11,19 @@ impl Encoder<'_> {
         Encoder { codes }
     }
 
-    pub fn to_binary(&self, instruction: Instruction) -> String {
+    pub fn to_binary(&self, instruction: Instruction, symbol_table: &SymbolTable) -> String {
         match instruction {
             Instruction::AInstrDecimal(val) => {
                 let mut binary = String::from("0");
                 binary.push_str(format!("{val:015b}\n").as_str());
                 binary
             },
-            Instruction::AInstrSymbol(_) => String::from("1111000011110000\n"),
+            Instruction::AInstrSymbol(s) => {
+                let mut binary = String::from("0");
+                let symbol_address = symbol_table.get_symbol_address(s.as_str());
+                binary.push_str(format!("{symbol_address:015b}\n").as_str());
+                binary
+            },
             Instruction::CInstr { dest, comp, jump } => {
                 let mut binary = String::from("111");
                 binary.push_str(self.codes.comp_codes.get(comp.as_str()).unwrap());

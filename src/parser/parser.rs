@@ -3,13 +3,12 @@ use crate::parser::instruction::Instruction;
 use crate::parser::instruction::Instruction::{AInstrDecimal, AInstrSymbol, CInstr, Error, LInstr};
 
 pub struct Parser<'a> {
-    failed: bool,
     codes: &'a Codes,
 }
 
 impl Parser<'_> {
     pub fn new(codes: &Codes) -> Parser {
-        Parser { failed: false, codes }
+        Parser { codes }
     }
 
     pub fn generate_instruction(&mut self, line_number: usize, asm_instr: String) -> Instruction {
@@ -24,10 +23,6 @@ impl Parser<'_> {
         }
     }
 
-    pub fn failed(&self) -> bool {
-        self.failed
-    }
-
     pub(super) fn parse_a_instr(&mut self, line_number: usize, asm_instr: String) -> Instruction {
         let value = &asm_instr[1..];
 
@@ -37,7 +32,6 @@ impl Parser<'_> {
             AInstrSymbol(String::from(value))
         } else {
             log::error!("failed to parse A instruction {asm_instr} on line {line_number}");
-            self.failed = true;
             Error
         };
     }
@@ -49,7 +43,6 @@ impl Parser<'_> {
             LInstr(String::from(value), line_number)
         } else {
             log::error!("failed to parse L instruction {asm_instr} on line {line_number}");
-            self.failed = true;
             Error
         }
     }
@@ -74,7 +67,6 @@ impl Parser<'_> {
             dest = String::from(dst);
         } else {
             log::error!("invalid destination {dst} in C instruction on line {line_number}");
-            self.failed = true;
             return Error;
         }
 
@@ -83,7 +75,6 @@ impl Parser<'_> {
             jump = String::from(jmp);
         } else {
             log::error!("invalid jump {jmp} in C instruction on line {line_number}");
-            self.failed = true;
             return Error;
         }
 
@@ -92,7 +83,6 @@ impl Parser<'_> {
             comp = String::from(cmp);
         } else {
             log::error!("invalid comp {cmp} in C instruction on line {line_number}");
-            self.failed = true;
             return Error;
         }
 

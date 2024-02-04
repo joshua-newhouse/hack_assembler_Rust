@@ -2,6 +2,7 @@
 mod parser_tests {
     use crate::{Codes, Parser};
     use crate::parser::instruction::Instruction;
+    use crate::parser::instruction::Instruction::Error;
     use crate::parser::parser::{is_a_instr, is_l_instr, is_valid_label};
 
     #[test]
@@ -61,7 +62,6 @@ mod parser_tests {
         let instruction = parser.parse_a_instr(44, String::from("@3245"));
 
         assert_eq!(Instruction::AInstrDecimal(3245), instruction);
-        assert!(!parser.failed())
     }
 
     #[test]
@@ -71,7 +71,6 @@ mod parser_tests {
         let instruction = parser.parse_a_instr(44, String::from("@-1"));
 
         assert_eq!(Instruction::Error, instruction);
-        assert!(parser.failed())
     }
 
     #[test]
@@ -81,7 +80,6 @@ mod parser_tests {
         let instruction = parser.parse_a_instr(44, String::from("@_b1La1$e:l."));
 
         assert_eq!(Instruction::AInstrSymbol(String::from("_b1La1$e:l.")), instruction);
-        assert!(!parser.failed())
     }
 
     #[test]
@@ -91,7 +89,6 @@ mod parser_tests {
         let instruction = parser.parse_a_instr(44, String::from("@7_b1La1$e:l."));
 
         assert_eq!(Instruction::Error, instruction);
-        assert!(parser.failed())
     }
 
     #[test]
@@ -101,7 +98,6 @@ mod parser_tests {
         let instruction = parser.parse_l_instr(32, String::from("(SOME_LABEL)"));
 
         assert_eq!(Instruction::LInstr(String::from("SOME_LABEL"), 32), instruction);
-        assert!(!parser.failed())
     }
 
     #[test]
@@ -111,7 +107,6 @@ mod parser_tests {
         let instruction = parser.parse_l_instr(32, String::from("(;SOME_LABEL)"));
 
         assert_eq!(Instruction::Error, instruction);
-        assert!(parser.failed())
     }
 
     #[test]
@@ -128,7 +123,15 @@ mod parser_tests {
             },
             instruction
         );
-        assert!(!parser.failed())
+    }
+
+    #[test]
+    fn parse_c_instr_invalid_comp_only() {
+        let codes = Codes::new();
+        let mut parser = Parser::new(&codes);
+        let instruction = parser.parse_c_instr(32, String::from("1-M"));
+
+        assert_eq!(Error, instruction);
     }
 
     #[test]
@@ -145,7 +148,15 @@ mod parser_tests {
             },
             instruction
         );
-        assert!(!parser.failed())
+    }
+
+    #[test]
+    fn parse_c_instr_invalid_comp_and_dest() {
+        let codes = Codes::new();
+        let mut parser = Parser::new(&codes);
+        let instruction = parser.parse_c_instr(32, String::from("DAM=M-1"));
+
+        assert_eq!(Error, instruction);
     }
 
     #[test]
@@ -162,7 +173,15 @@ mod parser_tests {
             },
             instruction
         );
-        assert!(!parser.failed())
+    }
+
+    #[test]
+    fn parse_c_instr_invalid_comp_and_jump() {
+        let codes = Codes::new();
+        let mut parser = Parser::new(&codes);
+        let instruction = parser.parse_c_instr(32, String::from("M-1;JAG"));
+
+        assert_eq!(Error, instruction);
     }
 
     #[test]
@@ -179,6 +198,14 @@ mod parser_tests {
             },
             instruction
         );
-        assert!(!parser.failed())
+    }
+
+    #[test]
+    fn parse_c_instr_invalid_comp_and_jump_and_dest() {
+        let codes = Codes::new();
+        let mut parser = Parser::new(&codes);
+        let instruction = parser.parse_c_instr(32, String::from("MAD=1-A;JAM"));
+
+        assert_eq!(Error, instruction);
     }
 }

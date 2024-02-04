@@ -45,7 +45,7 @@ impl Application<'_> {
 
         let instructions = self.parse_input_into_instructions(input_reader);
 
-        if self.parser.failed() {
+        if self.failed {
             return Err(8);
         }
 
@@ -78,7 +78,12 @@ impl Application<'_> {
             .map(|(line_num, asm_instr)| self.parser.generate_instruction(line_num, asm_instr))
             .inspect(|instr|
                 match instr {
-                    Instruction::AInstrSymbol(_) | Instruction::LInstr(_, _) => { self.symbol_table.add_symbol(instr) }
+                    Instruction::Error => self.failed = true,
+                    Instruction::AInstrSymbol(_) | Instruction::LInstr(_, _) => {
+                        if let Err(_) = self.symbol_table.add_symbol(instr) {
+                            self.failed = true;
+                        }
+                    }
                     _ => (),
                 }
             )
@@ -98,7 +103,7 @@ impl Application<'_> {
                     println!("{:?}", instr)
                 }
             })
-            .map(|instr| self.encoder.to_binary(instr))
+            .map(|instr| self.encoder.to_binary(instr, &self.symbol_table))
             .inspect(|instr| {
                 if log::max_level() == LevelFilter::Debug {
                     println!("{instr}")
