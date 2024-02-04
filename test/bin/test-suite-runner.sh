@@ -2,7 +2,6 @@
 
 #Test suite runner
 # arg1: test suite file path
-# arg2: path to program under test
 
 source "$(dirname "${0}")"/logging.sh
 
@@ -48,7 +47,7 @@ function Main() {
             $FailureMessage "${testCase}::${test} failed with return code: ${rc}" | ${LOG_ERR} &&
             FAILED_TEST_CASES+=("${testCase}::${test}") &&
             returnCode=1 ||
-            $TestingSuccessMessage "${testCase}::${test} passed" | ${LOG}
+            $TestingSuccessMessage "${testCase}::${test}" | ${LOG}
     done
 
     # Final test suite report

@@ -16,7 +16,10 @@ if [[ -z "$(which tput)" ]] \
     ErrMessage='eval echo -e "$(date +%F\ %T) [ERROR]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
     WarnMessage='eval echo -e "$(date +%F\ %T) [WARNING]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
     InfoMessage='eval echo -e "$(date +%F\ %T) [INFO]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
+    TestingMessage='eval echo -e "$(date +%F\ %T) [TESTING]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
+    TestingSuccessMessage='eval echo -e "$(date +%F\ %T) [PASSED]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
     SuccessMessage='eval echo -e "$(date +%F\ %T) [SUCCESS]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
+    FailureMessage='eval echo -e "$(date +%F\ %T) [FAILURE]\t$(basename "${0}")/${FUNCNAME[0]}/${LINENO}"'
 
     return
 fi
@@ -59,7 +62,7 @@ export -f LogTesting
 TestingMessage='eval LogTesting "$(echo -e "$(basename $0)/${FUNCNAME[0]}/$LINENO")"'
 
 LogTestSuccess() {
-    Log "${1}" "${*:2}" "SUCCESS" "\033[1;35m"
+    Log "${1}" "${*:2}" "PASSED" "\033[1;35m"
 }
 export -f LogTestSuccess
 TestingSuccessMessage='eval LogTestSuccess "$(echo -e $(basename "${0}")/${FUNCNAME[0]}/${LINENO})"'
