@@ -3,6 +3,7 @@ pub use application::application::Application;
 pub use parser::parser::Parser;
 pub use symbol_table::symbol_table::SymbolTable;
 pub use encoder::encoder::Encoder;
+pub use encoder::codes::Codes;
 
 mod application;
 mod parser;

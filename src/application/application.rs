@@ -1,19 +1,26 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 
+use log::LevelFilter;
+
 use crate::{Config, Encoder, Parser, SymbolTable};
 use crate::parser::instruction::Instruction;
 
-pub struct Application {
+pub struct Application<'a> {
     config: Config,
-    parser: Parser,
+    parser: Parser<'a>,
     symbol_table: SymbolTable,
-    encoder: Encoder,
+    encoder: Encoder<'a>,
     failed: bool,
 }
 
-impl Application {
-    pub fn new(config: Config, parser: Parser, symbol_table: SymbolTable, encoder: Encoder) -> Application {
+impl Application<'_> {
+    pub fn new<'a>(
+        config: Config,
+        parser: Parser<'a>,
+        symbol_table: SymbolTable,
+        encoder: Encoder<'a>,
+    ) -> Application<'a> {
         Application { config, parser, symbol_table, encoder, failed: false }
     }
 
@@ -62,7 +69,10 @@ impl Application {
                     None => line,
                 }
             })
-            .map(|line| String::from(line.trim()))
+            .map(|mut line| {
+                line.retain(|c| !c.is_whitespace());
+                line
+            })
             .filter(|line| !line.is_empty())
             .enumerate()
             .map(|(line_num, asm_instr)| self.parser.generate_instruction(line_num, asm_instr))
@@ -83,8 +93,17 @@ impl Application {
 
     fn write_instructions_to_file(&mut self, instructions: Vec<Instruction>, mut output_file: File) {
         instructions.into_iter()
-            .inspect(|instr| println!("{:?}", instr))
+            .inspect(|instr| {
+                if log::max_level() == LevelFilter::Debug {
+                    println!("{:?}", instr)
+                }
+            })
             .map(|instr| self.encoder.to_binary(instr))
+            .inspect(|instr| {
+                if log::max_level() == LevelFilter::Debug {
+                    println!("{:?}", instr)
+                }
+            })
             .for_each(|binary_instr| {
                 if self.failed {
                     return;

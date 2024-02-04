@@ -1,14 +1,16 @@
+use crate::encoder::codes::Codes;
 use crate::parser::instruction::Instruction;
 
-#[derive(Debug)]
-pub struct Encoder {}
+pub struct Encoder<'a> {
+    codes: &'a Codes,
+}
 
-impl Encoder {
-    pub fn new() -> Encoder {
-        Encoder {}
+impl Encoder<'_> {
+    pub fn new(codes: &Codes) -> Encoder {
+        Encoder { codes }
     }
 
     pub fn to_binary(&self, instruction: Instruction) -> String {
-        format!("{:?}", instruction)
+        String::from("1111000011110000")
     }
 }

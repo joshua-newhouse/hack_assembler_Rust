@@ -9,7 +9,7 @@ impl SymbolTable {
     }
 
     pub fn add_symbol(&mut self, instruction: &Instruction) {
-        log::debug!("adding symbol to table...");
+        log::debug!("adding symbol {:?} to table", instruction);
     }
 
     pub fn resolve_addresses(&mut self) {

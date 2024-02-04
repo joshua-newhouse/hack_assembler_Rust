@@ -20,9 +20,10 @@ fn main() {
 
     log::debug!("assembling with the following configuration\n{:#?}", config);
 
-    let parser = hack_assembler::Parser::new();
+    let codes = hack_assembler::Codes::new();
+    let encoder = hack_assembler::Encoder::new(&codes);
+    let parser = hack_assembler::Parser::new(&codes);
     let symbol_table = hack_assembler::SymbolTable::new();
-    let encoder = hack_assembler::Encoder::new();
     let mut application = hack_assembler::Application::new(config, parser, symbol_table, encoder);
 
     if let Err(code) = application.run() {
