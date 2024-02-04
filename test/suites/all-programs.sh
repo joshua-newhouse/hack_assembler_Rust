@@ -46,4 +46,14 @@ function TestPong() {
 }
 TEST_CASES["4"]="TestPong"
 
+function TestInvalidProgram() {
+    local base_dir="$(dirname "${0}")"
+    local asm_file="${base_dir}/../../resources/asm/invalid.asm"
+    local hack_out="${base_dir}/../../resources/hack/invalid.hack"
+
+    ./"${base_dir}"/../../target/release/hack-assembler -i "${asm_file}" -o "${hack_out}" 2 > /dev/null
+    [[ $? -ne 0 ]]
+}
+TEST_CASES["5"]="TestInvalidProgram"
+
 export TEST_CASES
