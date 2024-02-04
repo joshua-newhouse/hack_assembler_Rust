@@ -65,22 +65,22 @@ impl Parser<'_> {
         }
 
         if let Some((c, j)) = cmp.split_once(';') {
-            jmp = j;
             cmp = c;
+            jmp = j;
         }
 
-        let dest: Option<String>;
+        let dest: String;
         if self.codes.is_valid_destination(dst) {
-            dest = if dst.is_empty() { None } else { Some(String::from(dst)) };
+            dest = String::from(dst);
         } else {
             log::error!("invalid destination {dst} in C instruction on line {line_number}");
             self.failed = true;
             return Error;
         }
 
-        let jump: Option<String>;
+        let jump: String;
         if self.codes.is_valid_jump(jmp) {
-            jump = if jmp.is_empty() { None } else { Some(String::from(jmp)) };
+            jump = String::from(jmp);
         } else {
             log::error!("invalid jump {jmp} in C instruction on line {line_number}");
             self.failed = true;
@@ -91,7 +91,6 @@ impl Parser<'_> {
         if self.codes.is_valid_comp(cmp) {
             comp = String::from(cmp);
         } else {
-            comp = String::from("");
             log::error!("invalid comp {cmp} in C instruction on line {line_number}");
             self.failed = true;
             return Error;

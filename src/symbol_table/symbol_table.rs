@@ -1,6 +1,5 @@
 use crate::parser::instruction::Instruction;
 
-#[derive(Debug)]
 pub struct SymbolTable {}
 
 impl SymbolTable {

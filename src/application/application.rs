@@ -35,7 +35,7 @@ impl Application<'_> {
             }
         };
 
-        let mut output_file = match File::create(&self.config.output_file_path) {
+        let output_file = match File::create(&self.config.output_file_path) {
             Ok(file) => file,
             Err(e) => {
                 log::error!("failed opening {:#?} for writing\n{e}", &self.config.output_file_path);
@@ -101,7 +101,7 @@ impl Application<'_> {
             .map(|instr| self.encoder.to_binary(instr))
             .inspect(|instr| {
                 if log::max_level() == LevelFilter::Debug {
-                    println!("{:?}", instr)
+                    println!("{instr}")
                 }
             })
             .for_each(|binary_instr| {
@@ -112,7 +112,7 @@ impl Application<'_> {
                 match output_file.write_all(binary_instr.as_bytes()) {
                     Ok(_) => (),
                     Err(e) => {
-                        log::error!("failed writing instruction to file");
+                        log::error!("failed writing instruction to file\n{e}");
                         self.failed = true;
                     }
                 }

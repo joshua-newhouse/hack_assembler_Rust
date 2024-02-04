@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod parser_tests {
-    use crate::{Codes, Encoder, Parser};
+    use crate::{Codes, Parser};
     use crate::parser::instruction::Instruction;
     use crate::parser::parser::{is_a_instr, is_l_instr, is_valid_label};
 
@@ -122,9 +122,9 @@ mod parser_tests {
 
         assert_eq!(
             Instruction::CInstr {
-                dest: None,
+                dest: String::from(""),
                 comp: String::from("M-1"),
-                jump: None,
+                jump: String::from(""),
             },
             instruction
         );
@@ -139,9 +139,9 @@ mod parser_tests {
 
         assert_eq!(
             Instruction::CInstr {
-                dest: Some(String::from("A")),
+                dest: String::from("A"),
                 comp: String::from("M-1"),
-                jump: None,
+                jump: String::from(""),
             },
             instruction
         );
@@ -156,9 +156,9 @@ mod parser_tests {
 
         assert_eq!(
             Instruction::CInstr {
-                dest: None,
+                dest: String::from(""),
                 comp: String::from("M-1"),
-                jump: Some(String::from("JEQ")),
+                jump: String::from("JEQ"),
             },
             instruction
         );
@@ -173,9 +173,9 @@ mod parser_tests {
 
         assert_eq!(
             Instruction::CInstr {
-                dest: Some(String::from("MD")),
+                dest: String::from("MD"),
                 comp: String::from("M-1"),
-                jump: Some(String::from("JEQ")),
+                jump: String::from("JEQ"),
             },
             instruction
         );

@@ -11,6 +11,22 @@ impl Encoder<'_> {
     }
 
     pub fn to_binary(&self, instruction: Instruction) -> String {
-        String::from("1111000011110000")
+        match instruction {
+            Instruction::AInstrDecimal(val) => {
+                let mut binary = String::from("0");
+                binary.push_str(format!("{val:015b}\n").as_str());
+                binary
+            },
+            Instruction::AInstrSymbol(_) => String::from("1111000011110000\n"),
+            Instruction::CInstr { dest, comp, jump } => {
+                let mut binary = String::from("111");
+                binary.push_str(self.codes.comp_codes.get(comp.as_str()).unwrap());
+                binary.push_str(self.codes.dest_codes.get(dest.as_str()).unwrap());
+                binary.push_str(self.codes.jump_codes.get(jump.as_str()).unwrap());
+                binary.push('\n');
+                binary
+            },
+            _ => String::from("0000000000000000\n"),
+        }
     }
 }
